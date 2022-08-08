@@ -1,4 +1,4 @@
-from .ABSObjectFile import ABSObject
+from .ABSObject import ABSObject
 
 
 class Building(ABSObject):

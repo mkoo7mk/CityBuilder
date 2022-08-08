@@ -1,10 +1,9 @@
-import Classes.Parrents.MapFile as CMap
-from Classes.Parrents.BuildingFile import Building
+import Classes.Parents.Map as CMap
 from Classes.Buildings.CommercialBuildingFile import CommercialBuilding
 from Classes.Buildings.IndustrialBuildingFile import IndustrialBuilding
 from Classes.Buildings.ResidenceHouseFile import ResidenceHouse
-from Classes.Parrents.RendererFile import main
-from Classes.Parrents.MenuBarFile import MenuBar
+from Classes.Parents.Renderer import main
+from Classes.Parents.MenuBar import MenuBar
 
 m = CMap.Map(id=0)
 rh = ResidenceHouse("R", 0)

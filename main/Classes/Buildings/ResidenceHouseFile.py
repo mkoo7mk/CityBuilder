@@ -1,4 +1,4 @@
-from ..Parrents.BuildingFile import Building
+from ..Parents.Building import Building
 
 
 class ResidenceHouse(Building):
