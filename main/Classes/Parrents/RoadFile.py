@@ -1,4 +1,4 @@
-from ABSObject import ABSObject
+from main.Classes.Parrents.ABSObject import ABSObject
 
 
 class Road(ABSObject):

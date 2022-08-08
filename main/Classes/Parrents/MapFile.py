@@ -1,4 +1,4 @@
-from ABSObject import ABSObject
+from .ABSObjectFile import ABSObject
 
 
 class Map(ABSObject):

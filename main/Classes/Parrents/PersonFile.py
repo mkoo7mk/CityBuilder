@@ -1,4 +1,4 @@
-from Entity import Entity
+from main.Classes.Parrents.Entity import Entity
 
 
 class Person(Entity):
