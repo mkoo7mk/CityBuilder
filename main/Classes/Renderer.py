@@ -56,12 +56,20 @@ def showScreen():
     glutSwapBuffers()
 
 
+def mouseControl(button, state, mx, my):
+    my = abs(my - RESOLUTION)
+    if button == GLUT_LEFT_BUTTON:
+        if state == GLUT_DOWN:
+            print(mx, my)
+
+
 def main():
     glutInit()
     glutInitDisplayMode(GLUT_RGBA)
     glutInitWindowSize(RESOLUTION, RESOLUTION)
     glutInitWindowPosition(0, 0)
     window = glutCreateWindow("OpenGL Coding Practice")
+    glutMouseFunc(mouseControl)
     glutDisplayFunc(showScreen)
     glutIdleFunc(showScreen)
     glutMainLoop()
