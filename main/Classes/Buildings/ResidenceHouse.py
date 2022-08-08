@@ -1,4 +1,4 @@
-from ..Building import Building
+from main.Classes.Building import Building
 
 
 class ResidenceHouse(Building):

@@ -1,7 +1,7 @@
+from math import floor
+
 from OpenGL.GL import *
 from OpenGL.GLUT import *
-from OpenGL.GLU import *
-
 
 RESOLUTION = 500
 GUI_SCALE = 10
@@ -60,7 +60,9 @@ def mouseControl(button, state, mx, my):
     my = abs(my - RESOLUTION)
     if button == GLUT_LEFT_BUTTON:
         if state == GLUT_DOWN:
-            print(mx, my)
+            x = floor(mx / RESOLUTION * GUI_SCALE)
+            y = floor(my / RESOLUTION * GUI_SCALE)
+            print(x, y)
 
 
 def main():
@@ -68,12 +70,8 @@ def main():
     glutInitDisplayMode(GLUT_RGBA)
     glutInitWindowSize(RESOLUTION, RESOLUTION)
     glutInitWindowPosition(0, 0)
-    window = glutCreateWindow("OpenGL Coding Practice")
+    window = glutCreateWindow("City Builder")
     glutMouseFunc(mouseControl)
     glutDisplayFunc(showScreen)
     glutIdleFunc(showScreen)
     glutMainLoop()
-
-
-if __name__ == '__main__':
-    main()
