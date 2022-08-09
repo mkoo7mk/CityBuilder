@@ -9,9 +9,6 @@ from Classes.Parents.Game import Game
 from Classes.Parents.Map import Map
 from Classes.Parents.MouseHandler import MouseHandler
 from Classes.Parents.MenuBar import MenuBar
-from Classes.Buildings.ResidenceHouse import ResidenceHouse
-from Classes.Buildings.IndustrialBuilding import IndustrialBuilding
-from Classes.Buildings.CommercialBuilding import CommercialBuilding
 
 RESOLUTION = 500
 GUI_SCALE = 10
@@ -61,6 +58,7 @@ class Window:
         glutInitWindowSize(w, h)
         glutCreateWindow('Test')
         glutMouseFunc(self.mouseControl)
+        glutMouseWheelFunc(self.mouse_wheel)
         glutReshapeFunc(self.reshape)
         glutDisplayFunc(self.display)
         glutIdleFunc(self.idle_func)
@@ -69,17 +67,6 @@ class Window:
 
         self.start_time = time.time()
         self.num_frames = 0
-
-    def key_pressed(self, key, x, y):
-        print(key, x, y)
-        try:
-            key = key.decode()
-            key = int(key)
-        except UnicodeDecodeError or ValueError:
-            return
-        if key in range(0, 4):
-            game.menu_bar.selected = key
-            print("xxddd")
 
     def draw_rect(self, color: tuple, x0: float, y0: float, x1: float, y1: float) -> None:
         color_location = glGetUniformLocation(self.shaderProgram, "my_color")
@@ -91,13 +78,45 @@ class Window:
         glVertex2f(x1, y0)
         glEnd()
 
+    def mouse_wheel(self, wheel, direction, x, y):
+        global zoom
+        if 11 > zoom + direction > 0:
+            zoom += direction
+            print(zoom)
+            self.update()
+        print(wheel, direction, x, y)
+
     def mouseControl(self, button, state, mx, my):
         if button == GLUT_LEFT_BUTTON:
             if state == GLUT_DOWN:
                 x = floor(mx / self.window_width * len(self.visible_chunks))
-                y = - floor(my / self.window_height * len(self.visible_chunks)) + 1
-                mouse_handler.clicked(y - 7, x, game.map, game.menu_bar)  # Not a bug
+                y = - floor(my / self.window_height * len(self.visible_chunks))
+                print(self.player_y)
+                mouse_handler.clicked(y + self.player_x + zoom - 1, x + self.player_y - zoom, game.map, game.menu_bar)  # Not a bug
                 self.update()
+
+    def key_pressed(self, key, x, y):
+        try:
+            key = key.decode()
+        except UnicodeDecodeError or ValueError:
+            return
+        if key in "0123456789":
+            game.menu_bar.selected = int(key)
+            print("xxddd")
+        if key in "wasd":
+            if key == "w":
+                if self.player_x + zoom < len(self.map[0]):
+                    self.player_x += 1
+            elif key == "s":
+                if self.player_x - zoom > 0:
+                    self.player_x -= 1
+            elif key == "d":
+                if self.player_y + zoom < len(self.map[0]):
+                    self.player_y += 1
+            elif key == "a":
+                if self.player_y - zoom > 0:
+                    self.player_y -= 1
+            self.update()
 
     def update(self):
         self.visible_chunks = [self.map[i][self.player_y - zoom: self.player_y + zoom] for i in
