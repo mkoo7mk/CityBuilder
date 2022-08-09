@@ -3,9 +3,9 @@ from typing import Union
 
 
 class Building(ABSObject):
-    def __init__(self, name: str, id: int):
+    def __init__(self, name: str, id: int, color: tuple):
         super().__init__(name, id)
-        self._color = (40, 40, 150)
+        self._color = color
         self.__model = None
         self.__level = 0
         self.__maxLevel = 5

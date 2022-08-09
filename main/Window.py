@@ -75,9 +75,9 @@ class Window:
         try:
             key = key.decode()
             key = int(key)
-        except UnicodeDecodeError as e:
+        except UnicodeDecodeError or ValueError:
             return
-        if key in range(1, 4):
+        if key in range(0, 4):
             game.menu_bar.selected = key
             print("xxddd")
 
@@ -97,7 +97,6 @@ class Window:
                 x = floor(mx / self.window_width * len(self.visible_chunks))
                 y = - floor(my / self.window_height * len(self.visible_chunks)) + 1
                 mouse_handler.clicked(y - 7, x, game.map, game.menu_bar)  # Not a bug
-                print(self.map[y-7][x].get_building())
                 self.update()
 
     def update(self):
@@ -115,10 +114,12 @@ class Window:
                 y0 = round(temp * ykey - temp1, temp2)
                 y1 = round(temp * (ykey + 1) - temp1, temp2)
                 if is_drawing:
-                    if cell.get_building() is None:
-                        self.draw_rect(cell.get_terrain().color, x0, y0, x1, y1)
-                    else:
+                    if cell.get_building() is not None:
                         self.draw_rect(cell.get_building().get_color(), x0, y0, x1, y1)
+                    elif cell.get_road() is not None:
+                        self.draw_rect(cell.get_road().get_color(), x0, y0, x1, y1)
+                    else:
+                        self.draw_rect(cell.get_terrain().color, x0, y0, x1, y1)
                 else:
                     print(x0, x1, y0, y1)
 
