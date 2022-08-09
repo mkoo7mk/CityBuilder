@@ -1,4 +1,5 @@
 import time
+from math import floor
 
 import numpy as np
 from OpenGL.GL import *
@@ -26,13 +27,10 @@ VERTEX_SHADER = """
 
 FRAGMENT_SHADER = """
 #version 330
-
+    uniform vec3 my_color;
     void main() {
-
-    gl_FragColor = 
-
-    vec4(1.0f, 0.0f,0.0f,1.0f);
-
+    gl_FragColor.rgb = my_color;
+    gl_FragColor.a = 1; // the alpha component
     }
 
 """
@@ -45,16 +43,21 @@ class Window:
         self.shaderProgram = None
         self.player_x = 10
         self.player_y = 10
+        self.map = ma.cells
         self.visible_chunks = [ma.cells[i][self.player_y - zoom: self.player_y + zoom] for i in range(self.player_x - zoom, self.player_x + zoom)]
 
         self.window_width = w
         self.window_height = h
+        self.whole_map = True
+
+        self.rect(False)
         glutInitContextProfile(GLUT_CORE_PROFILE)
         glutInitContextFlags(GLUT_FORWARD_COMPATIBLE)
         glutSetOption(GLUT_MULTISAMPLE, 16)
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE)
         glutInitWindowSize(w, h)
         glutCreateWindow('Test')
+        glutMouseFunc(self.mouseControl)
         glutReshapeFunc(self.reshape)
         glutDisplayFunc(self.display)
         glutIdleFunc(self.idle_func)
@@ -63,16 +66,58 @@ class Window:
         self.start_time = time.time()
         self.num_frames = 0
 
-    def render(self):
-        glClearColor(0, 0, 0, 1)
+    def draw_rect(self, color: tuple, x0: float, y0: float, x1: float, y1: float) -> None:
+        color_location = glGetUniformLocation(self.shaderProgram, "my_color")
+        glUniform3fv(color_location, 1, color)
+        glBegin(GL_QUADS)
+        glVertex2f(x0, y0)
+        glVertex2f(x0, y1)
+        glVertex2f(x1, y1)
+        glVertex2f(x1, y0)
+        glEnd()
+
+    def mouseControl(self, button, state, mx, my):
+        if button == GLUT_LEFT_BUTTON:
+            if state == GLUT_DOWN:
+                self.whole_map = not self.whole_map
+                print(self.whole_map)
+
+    def rect(self, is_drawing: bool):
+        temp1 = 1
+        temp2 = 3
+        temp = 2 / len(self.visible_chunks)
+        for ykey, yvalue in enumerate(self.visible_chunks):
+            for xkey, xvalue in enumerate(yvalue):
+                x0 = round(temp * xkey - temp1, temp2)
+                x1 = round(temp * (xkey + 1) - temp1, temp2)
+                y0 = round(temp * ykey - temp1, temp2)
+                y1 = round(temp * (ykey + 1) - temp1, temp2)
+                if is_drawing:
+                    self.draw_rect(xvalue.color, x0, y0, x1, y1)
+                else:
+                    print(x0, x1, y0, y1)
+
+    def render(self) -> None:
+        glClearColor(0, 0, 0, 1)  # Background color
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glUseProgram(self.shaderProgram)
-
-        glDrawArrays(GL_TRIANGLES, 0, 3)
-
+        temp = 0.05
+        temp1 = 1
+        temp2 = 3
+        if self.whole_map:
+            temp = 2 / len(self.map)
+            for ykey, yvalue in enumerate(self.map):
+                for xkey, xvalue in enumerate(yvalue):
+                    x0 = round(temp * xkey - temp1, temp2)
+                    x1 = round(temp * (xkey + 1) - temp1, temp2)
+                    y0 = round(temp * ykey - temp1, temp2)
+                    y1 = round(temp * (ykey + 1) - temp1, temp2)
+                    self.draw_rect(xvalue.color, x0, y0, x1, y1)
+        else:
+            self.rect(True)
         glUseProgram(0)
-        glutSwapBuffers()
+        self.display()
 
     def display(self):
 
@@ -105,15 +150,8 @@ class Window:
 
         self.shaderProgram = shaders.compileProgram(self.vertexshader, self.fragmentshader)
 
-        triangles = [-0.5, -0.5, 0.0,
-                     0.5, -0.5, 0.0,
-                     0.0, 0.5, 0.0]
-
-        triangles = np.array(triangles, dtype=np.float32)
-
         VBO = glGenBuffers(1)
         glBindBuffer(GL_ARRAY_BUFFER, VBO)
-        glBufferData(GL_ARRAY_BUFFER, triangles.nbytes, triangles, GL_STATIC_DRAW)
 
         position = glGetAttribLocation(self.shaderProgram, 'position')
         glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, 0, None)
