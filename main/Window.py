@@ -1,16 +1,16 @@
 import time
 from math import floor
 
-import numpy as np
 from OpenGL.GL import *
 from OpenGL.GL import shaders
 from OpenGL.GLUT import *
 
 from Classes.Parents.Map import Map
+from Classes.Parents.Game import Game
 
 RESOLUTION = 500
 GUI_SCALE = 10
-zoom = 5  # How many lines of squares of screen will be visible
+zoom = 10  # How many lines of squares of screen will be visible
 
 VERTEX_SHADER = """
 
@@ -48,9 +48,7 @@ class Window:
 
         self.window_width = w
         self.window_height = h
-        self.whole_map = True
 
-        self.rect(False)
         glutInitContextProfile(GLUT_CORE_PROFILE)
         glutInitContextFlags(GLUT_FORWARD_COMPATIBLE)
         glutSetOption(GLUT_MULTISAMPLE, 16)
@@ -79,8 +77,9 @@ class Window:
     def mouseControl(self, button, state, mx, my):
         if button == GLUT_LEFT_BUTTON:
             if state == GLUT_DOWN:
-                self.whole_map = not self.whole_map
-                print(self.whole_map)
+                x = floor(mx / self.window_width * len(self.visible_chunks))
+                y = floor(my / self.window_height * len(self.visible_chunks))
+                self.visible_chunks[-(y + 1)][x].get_terrain().color = (1, 1, 1)
 
     def rect(self, is_drawing: bool):
         temp1 = 1
@@ -93,7 +92,7 @@ class Window:
                 y0 = round(temp * ykey - temp1, temp2)
                 y1 = round(temp * (ykey + 1) - temp1, temp2)
                 if is_drawing:
-                    self.draw_rect(xvalue.color, x0, y0, x1, y1)
+                    self.draw_rect(xvalue.get_terrain().color, x0, y0, x1, y1)
                 else:
                     print(x0, x1, y0, y1)
 
@@ -102,20 +101,7 @@ class Window:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glUseProgram(self.shaderProgram)
-        temp = 0.05
-        temp1 = 1
-        temp2 = 3
-        if self.whole_map:
-            temp = 2 / len(self.map)
-            for ykey, yvalue in enumerate(self.map):
-                for xkey, xvalue in enumerate(yvalue):
-                    x0 = round(temp * xkey - temp1, temp2)
-                    x1 = round(temp * (xkey + 1) - temp1, temp2)
-                    y0 = round(temp * ykey - temp1, temp2)
-                    y1 = round(temp * (ykey + 1) - temp1, temp2)
-                    self.draw_rect(xvalue.color, x0, y0, x1, y1)
-        else:
-            self.rect(True)
+        self.rect(True)
         glUseProgram(0)
         self.display()
 
@@ -159,6 +145,6 @@ class Window:
 
 
 if __name__ == '__main__':
-    m = Map(1, "Hello")
-    win = Window(500, 500, m)
+    game = Game(Map(1, "Hello"))
+    win = Window(500, 500, game.map)
     win.run()

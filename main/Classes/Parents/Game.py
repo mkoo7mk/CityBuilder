@@ -1,11 +1,14 @@
-from MenuBar import MenuBar
-from Map import Map
+# Save/open handling
+# Will have map and list of cells
+from .Map import Map
 
 
 class Game(object):
-    def __init__(self, menu: MenuBar, m: Map) -> None:
-        self.MAX_BUILDING_TYPES_COUNT = 5
-        self.MENU_BAR = menu
-        self.MAP = m
-        self.save = None
-        self.building_list = []
+    def __init__(self, m: Map):
+        self.map = m
+
+    def save_game(self):
+        pass
+
+    def load_game(self):
+        pass
