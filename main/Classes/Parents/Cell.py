@@ -20,3 +20,6 @@ class Cell:
 
     def get_building(self) -> Union[None, Building]:
         return self.__building
+
+    def set_building(self, building) -> None:
+        self.__building = building

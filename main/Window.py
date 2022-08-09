@@ -5,8 +5,13 @@ from OpenGL.GL import *
 from OpenGL.GL import shaders
 from OpenGL.GLUT import *
 
-from Classes.Parents.Map import Map
 from Classes.Parents.Game import Game
+from Classes.Parents.Map import Map
+from Classes.Parents.MouseHandler import MouseHandler
+from Classes.Parents.MenuBar import MenuBar
+from Classes.Buildings.ResidenceHouse import ResidenceHouse
+from Classes.Buildings.IndustrialBuilding import IndustrialBuilding
+from Classes.Buildings.CommercialBuilding import CommercialBuilding
 
 RESOLUTION = 500
 GUI_SCALE = 10
@@ -45,7 +50,7 @@ class Window:
         self.player_y = 10
         self.map = ma.cells
         self.visible_chunks = [ma.cells[i][self.player_y - zoom: self.player_y + zoom] for i in range(self.player_x - zoom, self.player_x + zoom)]
-
+        self.rect(False)
         self.window_width = w
         self.window_height = h
 
@@ -59,10 +64,22 @@ class Window:
         glutReshapeFunc(self.reshape)
         glutDisplayFunc(self.display)
         glutIdleFunc(self.idle_func)
+        glutKeyboardFunc(self.key_pressed)
         self.keys = {chr(i): False for i in range(256)}
 
         self.start_time = time.time()
         self.num_frames = 0
+
+    def key_pressed(self, key, x, y):
+        print(key, x, y)
+        try:
+            key = key.decode()
+            key = int(key)
+        except UnicodeDecodeError as e:
+            return
+        if key in range(1, 4):
+            game.menu_bar.selected = key
+            print("xxddd")
 
     def draw_rect(self, color: tuple, x0: float, y0: float, x1: float, y1: float) -> None:
         color_location = glGetUniformLocation(self.shaderProgram, "my_color")
@@ -78,21 +95,30 @@ class Window:
         if button == GLUT_LEFT_BUTTON:
             if state == GLUT_DOWN:
                 x = floor(mx / self.window_width * len(self.visible_chunks))
-                y = floor(my / self.window_height * len(self.visible_chunks))
-                self.visible_chunks[-(y + 1)][x].get_terrain().color = (1, 1, 1)
+                y = - floor(my / self.window_height * len(self.visible_chunks)) + 1
+                mouse_handler.clicked(y - 7, x, game.map, game.menu_bar)  # Not a bug
+                print(self.map[y-7][x].get_building())
+                self.update()
+
+    def update(self):
+        self.visible_chunks = [self.map[i][self.player_y - zoom: self.player_y + zoom] for i in
+                               range(self.player_x - zoom, self.player_x + zoom)]
 
     def rect(self, is_drawing: bool):
         temp1 = 1
         temp2 = 3
         temp = 2 / len(self.visible_chunks)
         for ykey, yvalue in enumerate(self.visible_chunks):
-            for xkey, xvalue in enumerate(yvalue):
+            for xkey, cell in enumerate(yvalue):
                 x0 = round(temp * xkey - temp1, temp2)
                 x1 = round(temp * (xkey + 1) - temp1, temp2)
                 y0 = round(temp * ykey - temp1, temp2)
                 y1 = round(temp * (ykey + 1) - temp1, temp2)
                 if is_drawing:
-                    self.draw_rect(xvalue.get_terrain().color, x0, y0, x1, y1)
+                    if cell.get_building() is None:
+                        self.draw_rect(cell.get_terrain().color, x0, y0, x1, y1)
+                    else:
+                        self.draw_rect(cell.get_building().get_color(), x0, y0, x1, y1)
                 else:
                     print(x0, x1, y0, y1)
 
@@ -145,6 +171,7 @@ class Window:
 
 
 if __name__ == '__main__':
-    game = Game(Map(1, "Hello"))
+    game = Game(Map(1, "Hello"), MenuBar())
+    mouse_handler = MouseHandler()
     win = Window(500, 500, game.map)
     win.run()
