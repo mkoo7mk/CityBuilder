@@ -8,15 +8,19 @@ from .Road import Road
 from ..Buildings.CommercialBuilding import CommercialBuilding
 from ..Buildings.IndustrialBuilding import IndustrialBuilding
 from ..Buildings.ResidenceHouse import ResidenceHouse
+from ..ConstructBuildings.ServiceBuildings import FireHouse
 
 
 class MouseHandler(object):
-    def clicked(self, x: int, y: int, m: Map, menu: MenuBar):
+    def clicked(self, x: int, y: int, m: Map, menu: MenuBar) -> int:
         building = m.cells[x][y].get_building()
         if building is None:
-            m.cells[x][y].set_building(self.build(menu.selected))
+            b = self.build(menu.selected)
+            m.cells[x][y].set_building(b)
+            return b.get_cost()
         else:
             building.print_name()
+            return 0
 
     def build(self, selected: int) -> Union[Building, Road]:
         print(selected)
@@ -28,6 +32,9 @@ class MouseHandler(object):
             return CommercialBuilding(self.get_building_name(selected), 0)
         elif selected == 0:
             return Road(self.get_building_name(selected), 0)
+        elif selected == 5:
+            a = FireHouse
+            return a
 
     @staticmethod
     def get_building_name(type_of_building: int) -> str:

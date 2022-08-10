@@ -94,7 +94,10 @@ class Window:
                 x = floor(mx / self.window_width * len(self.visible_chunks))
                 y = - floor(my / self.window_height * len(self.visible_chunks))
                 print(self.player_y)
-                mouse_handler.clicked(y + self.player_x + zoom - 1, x + self.player_y - zoom, game.map, game.menu_bar)  # Not a bug
+                temp = mouse_handler.clicked(y + self.player_x + zoom - 1, x + self.player_y - zoom, game.map, game.menu_bar)  # Not a bug
+                # TODO dont have negative money please
+                if temp != 0:
+                    game.pay(temp)
                 self.update()
 
     def key_pressed(self, key, x, y):
