@@ -8,14 +8,14 @@ from ..Terrains.Grass import Grass
 
 
 class Map(ABSObject):
-    def __init__(self, id: int, name=None) -> None:
+    def __init__(self, id: int, name=None, size=900) -> None:
         super().__init__(name, id)
         if name is None:
             self.__name = "Beverley hills"
         else:
             self.__name = name
         self.__id = id
-        self.size = 625  # How many cells will a map have
+        self.size = size  # How many cells will a map have
         s = int(sqrt(self.size))
         self.cells = [[Cell(Grass((0, round(randint(100, 255) / 255, 1), 0), "grass", None, Abscissa(x, y, x + s, y + s))) for x in range(s)] for y in range(s)]
 

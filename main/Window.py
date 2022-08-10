@@ -1,5 +1,6 @@
 import time
 from math import floor
+import numpy as np
 
 from OpenGL.GL import *
 from OpenGL.GL import shaders
@@ -43,10 +44,11 @@ class Window:
     def __init__(self, w: int, h: int, ma: Map):
         glutInit()
         self.shaderProgram = None
-        self.player_x = 10
-        self.player_y = 10
         self.map = ma.cells
+        self.player_x = floor(len(self.map) / 2)
+        self.player_y = floor(len(self.map) / 2)
         self.visible_chunks = [ma.cells[i][self.player_y - zoom: self.player_y + zoom] for i in range(self.player_x - zoom, self.player_x + zoom)]
+        self.visible_chunks = np.array(self.visible_chunks)
         self.rect(False)
         self.window_width = w
         self.window_height = h

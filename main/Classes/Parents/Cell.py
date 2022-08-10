@@ -23,3 +23,4 @@ class Cell:
 
     def set_building(self, building) -> None:
         self.__building = building
+

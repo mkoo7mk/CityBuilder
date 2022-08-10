@@ -11,9 +11,6 @@ from ..Buildings.ResidenceHouse import ResidenceHouse
 
 
 class MouseHandler(object):
-    def __init__(self):
-        pass
-
     def clicked(self, x: int, y: int, m: Map, menu: MenuBar):
         building = m.cells[x][y].get_building()
         if building is None:
