@@ -7,13 +7,15 @@ from .Vehicle import Vehicle
 
 class Building(ABSObject):
     def __init__(self, name: str, id: int, color: tuple, power_usage: int, power_output: int, water_usage: int, water_output: int,
-                 min_people: int, people_capacity: int, max_level: int, is_habitable: int, max_vehicles: int, cost: int, upkeep: int):
+                 min_people: int, people_capacity: int, max_level: int, is_habitable: bool, max_vehicles: int, cost: int, upkeep: int,
+                 pollution: int, noise_pollution: int):
         super().__init__(name, id)
         self._color = color
         self.__onFire = False
         self.__isCollapsed = False
         self.__model = None
         self.__level = 1
+        self.__cash_balance = 0
         self.__cost = cost
         self.__maxLevel = max_level
         self.__isHabitable = is_habitable
@@ -26,6 +28,9 @@ class Building(ABSObject):
         self.__peopleIn = []
         self.__vehiclesIn = []
         self.__max_vehicles = max_vehicles
+        self.__upkeep = upkeep
+        self.__pollution = pollution
+        self.__noise_pollution = noise_pollution
 
     def get_color(self) -> tuple:
         return self._color
@@ -35,6 +40,9 @@ class Building(ABSObject):
 
     def get_cost(self) -> int:
         return self.__cost
+
+    def get_upkeep(self) -> int:
+        return self.__upkeep
 
     def upgrade(self) -> None:
         if self.__level + 1 < self.__maxLevel:
@@ -52,12 +60,18 @@ class Building(ABSObject):
     def destroy(self):
         pass
 
+    def get_people_in(self) -> list:
+        return self.__peopleIn
+
     def add_person(self, person: Person) -> None:
         if self.__people_capacity > len(self.__peopleIn):
             self.__peopleIn.append(person)
 
     def remove_person(self, person: Person) -> None:
         self.__peopleIn.remove(person)
+
+    def get_vehicles_in(self) -> list:
+        return self.__vehiclesIn
 
     def add_vehicle(self, vehicle: Vehicle) -> None:
         if self.__max_vehicles > len(self.__vehiclesIn):
@@ -81,8 +95,14 @@ class Building(ABSObject):
     def get_level(self) -> float:
         return self.__level
 
-    def get_people_in(self) -> list:
-        return self.__peopleIn
+    def get_cash_balance(self) -> int:
+        return self.__cash_balance
 
-    def get_vehicles_in(self) -> list:
-        return self.__vehiclesIn
+    def is_habitable(self) -> bool:
+        return self.__isHabitable
+
+    def get_pollution(self) -> int:
+        return self.__pollution
+
+    def get_noise_pollution(self) -> int:
+        return self.__noise_pollution

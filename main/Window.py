@@ -107,7 +107,7 @@ class Window:
             return
         if key in "0123456789":
             game.menu_bar.selected = int(key)
-            print("xxddd")
+            print(int(key))
         if key in "wasd":
             if key == "w":
                 if self.player_x + zoom < len(self.map[0]):

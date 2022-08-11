@@ -8,7 +8,7 @@ from .Road import Road
 from ..Buildings.CommercialBuilding import CommercialBuilding
 from ..Buildings.IndustrialBuilding import IndustrialBuilding
 from ..Buildings.ResidenceHouse import ResidenceHouse
-from ..ConstructBuildings.ServiceBuildings import FireHouse
+from ..ConstructBuildings.ServiceBuildings import FireHouse, PoliceStation, MedicalClinic
 
 
 class MouseHandler(object):
@@ -33,8 +33,14 @@ class MouseHandler(object):
         elif selected == 0:
             return Road(self.get_building_name(selected), 0)
         elif selected == 5:
-            a = FireHouse
-            return a
+            temp = FireHouse
+            return temp
+        elif selected == 4:
+            temp = MedicalClinic
+            return temp
+        elif selected == 6:
+            temp = PoliceStation
+            return temp
 
     @staticmethod
     def get_building_name(type_of_building: int) -> str:
@@ -51,21 +57,21 @@ class MouseHandler(object):
                     "C:\\Users\\marti\\Desktop\\Programovanie\\Python games\\CityBuilder\\main\\Assets\\Constants\\ResidentialBuildingNames.txt",
                     "r") as file:
                 f = file.readlines()
-                out = f[randint(0, len(f))].replace("\n", "")
+                out = f[randint(0, len(f) - 1)].replace("\n", "")
                 file.close()
         elif type_of_building == 2:
             with open(
                     "C:\\Users\\marti\\Desktop\\Programovanie\\Python games\\CityBuilder\\main\\Assets\\Constants\\ResidentialBuildingNames.txt",
                     "r") as file:
                 f = file.readlines()
-                out = f[randint(0, len(f))].replace("\n", "")
+                out = f[randint(0, len(f)) - 1].replace("\n", "")
                 file.close()
         elif type_of_building == 3:
             with open(
                     "C:\\Users\\marti\\Desktop\\Programovanie\\Python games\\CityBuilder\\main\\Assets\\Constants\\CommercialBuildingNames.txt",
                     "r") as file:
                 f = file.readlines()
-                out = f[randint(0, len(f))].replace("\n", "")
+                out = f[randint(0, len(f) - 1)].replace("\n", "")
                 file.close()
 
         return out
