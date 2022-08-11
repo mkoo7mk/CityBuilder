@@ -1,5 +1,4 @@
 # Save/open handling
-# Will have map and list of cells
 from .Map import Map
 from .MenuBar import MenuBar
 

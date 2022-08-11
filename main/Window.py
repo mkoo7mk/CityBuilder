@@ -1,5 +1,7 @@
+import pickle
 import time
 from math import floor
+from os.path import exists
 import numpy as np
 
 from OpenGL.GL import *
@@ -10,6 +12,8 @@ from Classes.Parents.Game import Game
 from Classes.Parents.Map import Map
 from Classes.Parents.MouseHandler import MouseHandler
 from Classes.Parents.MenuBar import MenuBar
+from Classes.Parents.Save import Save
+
 
 RESOLUTION = 500
 GUI_SCALE = 10
@@ -108,7 +112,7 @@ class Window:
         if key in "0123456789":
             game.menu_bar.selected = int(key)
             print(int(key))
-        if key in "wasd":
+        if key in "wasdp":
             if key == "w":
                 if self.player_x + zoom < len(self.map[0]):
                     self.player_x += 1
@@ -121,6 +125,9 @@ class Window:
             elif key == "a":
                 if self.player_y - zoom > 0:
                     self.player_y -= 1
+            elif key == "p":
+                s.save(s)
+                print(s)
             self.update()
 
     def update(self):
@@ -196,7 +203,20 @@ class Window:
 
 
 if __name__ == '__main__':
-    game = Game(Map(1, "Hello"), MenuBar())
+    if not exists("Saves/save1.pickle"):
+        m = Map(1, "Hello")
+        game = Game(m, MenuBar())
+        s = Save(m, game)
+    else:
+        with open('Saves/save1.pickle', 'rb') as handle:
+            try:
+                b = pickle.load(handle)
+                m, g = b.get_map(), b.get_game()
+                game = Game(m, MenuBar())
+            except:
+                m = Map(1, "Hello")
+                game = Game(m, MenuBar())
+                s = Save(m, game)
     mouse_handler = MouseHandler()
     win = Window(500, 500, game.map)
     win.run()
