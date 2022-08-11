@@ -16,7 +16,6 @@ class Save(object):
     def get_game(self) -> Game:
         return self.__game
 
-    def save(self, o):
+    def save(self):
         with open('./Saves/save1.pickle', 'wb') as handle:
-            pickle.dump(o, handle)
-            print("Fuck you")
+            pickle.dump(self, handle)

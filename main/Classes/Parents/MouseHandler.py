@@ -16,8 +16,10 @@ class MouseHandler(object):
         building = m.cells[x][y].get_building()
         if building is None:
             b = self.build(menu.selected)
-            m.cells[x][y].set_building(b)
-            return b.get_cost()
+            if b is not None:
+                m.cells[x][y].set_building(b)
+                return b.get_cost()
+            return 0
         else:
             building.print_name()
             return 0

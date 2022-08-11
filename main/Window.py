@@ -14,6 +14,10 @@ from Classes.Parents.MouseHandler import MouseHandler
 from Classes.Parents.MenuBar import MenuBar
 from Classes.Parents.Save import Save
 
+# TODO delete building
+# TODO actual menu bar
+# TODO make image from map and render image instead of load of pixels
+# TODO road map, 2D array with "" and "x" in it for pathfinding
 
 RESOLUTION = 500
 GUI_SCALE = 10
@@ -126,8 +130,7 @@ class Window:
                 if self.player_y - zoom > 0:
                     self.player_y -= 1
             elif key == "p":
-                s.save(s)
-                print(s)
+                s.save()
             self.update()
 
     def update(self):
@@ -216,7 +219,7 @@ if __name__ == '__main__':
             except:
                 m = Map(1, "Hello")
                 game = Game(m, MenuBar())
-                s = Save(m, game)
+        s = Save(m, game)
     mouse_handler = MouseHandler()
     win = Window(500, 500, game.map)
     win.run()
