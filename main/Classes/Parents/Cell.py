@@ -24,3 +24,6 @@ class Cell:
     def set_building(self, building) -> None:
         self.__building = building
 
+    def destroy(self) -> None:
+        if self.__building is not None:
+            self.__building = None

@@ -2,8 +2,7 @@ from random import randint
 from typing import Union
 
 from .Building import Building
-from .Map import Map
-from .MenuBar import MenuBar
+from .Game import Game
 from .Road import Road
 from ..Buildings.CommercialBuilding import CommercialBuilding
 from ..Buildings.IndustrialBuilding import IndustrialBuilding
@@ -12,17 +11,22 @@ from ..ConstructBuildings.ServiceBuildings import FireHouse, PoliceStation, Medi
 
 
 class MouseHandler(object):
-    def clicked(self, x: int, y: int, m: Map, menu: MenuBar) -> int:
-        building = m.cells[x][y].get_building()
+    def clicked(self, x: int, y: int, g: Game):
+        building = g.map.cells[x][y].get_building()
         if building is None:
-            b = self.build(menu.selected)
+            b = self.build(g.menu_bar.selected)
             if b is not None:
-                m.cells[x][y].set_building(b)
-                return b.get_cost()
-            return 0
+                if g.get_money() - b.get_cost() >= 0:
+                    g.pay(b.get_cost())
+                    g.map.cells[x][y].set_building(b)
+                else:
+                    print("Not enough money! ")
         else:
-            building.print_name()
-            return 0
+            if g.menu_bar.selected == 9:
+                g.map.cells[x][y].destroy()
+                g.get_paid(round(building.get_cost() / 2))
+            else:
+                building.print_name()
 
     def build(self, selected: int) -> Union[Building, Road]:
         print(selected)

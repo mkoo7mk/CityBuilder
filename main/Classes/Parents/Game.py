@@ -9,6 +9,9 @@ class Game(object):
         self.menu_bar = mb
         self.__money = 50000
 
+    def get_money(self) -> int:
+        return self.__money
+
     def pay(self, amount: int):
         self.__money -= amount
         print(self.__money)
